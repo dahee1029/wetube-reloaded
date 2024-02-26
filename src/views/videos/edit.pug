@@ -1,0 +1,12 @@
+extends ../base
+
+block content 
+	h4 Change Title of video
+	//- input에 name을 넣어야 req.body에서 데이터를 볼 수 있음=> name을 넣어야 req.body에 접근이 가능해짐
+	//- form을 보내면 그내용을 req.body로 받을 수 있다.
+
+	form(method="POST")
+		input(name="title", placeholder="Video Title", value=video.title, required)
+		input(name="description" ,placeholder="Description", value= video.description, required, type="text",  minLength=5 )
+		input(name="hashtags" ,placeholder="Hastags, seperated by comma.",  value= video.hashtags.join(),required, type="text" )
+		input(value="Save", type="submit")

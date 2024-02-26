@@ -1,0 +1,16 @@
+extends ../base
+
+block content 
+	video(src="/"+ video.fileUrl ,controls)
+	div 
+		p=video.description
+		p=video.hashtags
+		small=video.createdAt 
+	div 
+		small Uploaded by 
+			a(href=`/users/${video.owner._id}`)= video.owner.username
+	//- 데이터 형태가 다르면 같다고 할 수 없음
+	if String(video.owner._id)===String(loggedInUser._id)
+		a(href=`${video.id}/edit`) Edit Video &rarr;
+		br
+		a(href=`${video.id}/delete`) Delete Video &rarr;

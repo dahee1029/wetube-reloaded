@@ -1,0 +1,17 @@
+extends base
+include mixins/video
+
+block content 
+	//- express덕분에 req.body req.query 등을 사용할 수 있음
+	//- form을 get방식으로 사용하면 url에 정보가 보인다
+	
+	form(method="GET").search__form
+		input(placeholder="Search by title", type="text", name="keyword")
+		button 
+			i.fas.fa-search
+
+	div.video-grid
+		each video in videos 
+			+video(video)
+		else
+			span.emty__message NO VIDEOS FOUND

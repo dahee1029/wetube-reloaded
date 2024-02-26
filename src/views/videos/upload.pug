@@ -1,0 +1,16 @@
+extends ../base
+
+block content 
+	//form에는 url이라는 action이 있다. 
+	if errorMessage 
+		span=errorMessage
+		//form안에다가 maxlength를 설정해주면 사용자가 10글자 이상 타이핑을 못하게 막아줌(사용자를위해)
+	form(method="POST", enctype='multipart/form-data')
+		//- label은 id가 필요함
+		//- multer middleware에서 사용하기 위해 name(video)이 필요함
+		label(for="video") Video File 
+		input(name="video",type="file",accept="video/*",required,id="video")
+		input(name="title" ,placeholder="Title", required, type="text", maxLength=10 )
+		input(name="description" ,placeholder="Description", required, type="text",  minLength=5 )
+		input(name="hashtags" ,placeholder="Hastags, seperated by comma.", required, type="text" )
+		input(type="submit", value="Upload")

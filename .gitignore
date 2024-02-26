@@ -1,0 +1,4 @@
+# 이파일에 추가하면 깃허브에 폴더가 업로드 되지 않음
+/node_modules
+.env
+/uploads
