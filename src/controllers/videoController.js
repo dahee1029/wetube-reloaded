@@ -25,7 +25,6 @@ export const watch= async(req,res)=> {
 
 export const getUpload=(req,res)=>{
 	const {_id}=req.session.user;
-	console.log(_id);
 	return res.render("videos/upload",{pageTitle: "Uploading New Video" });
 };
 //form이 데이터베이스에 데이터를 전송해주는 과정
@@ -69,13 +68,13 @@ export const getEdit= async(req, res)=> {
 	const {user: {_id}} =req.session;
 	//object를 edit templete으로 보내줘야 하기 때문에 video object가 필요함
 	const video= await Video.findById(id);
-	console.log(video);
 	if(!video){
 		return res.render("404", {pageTitle: "Video not found."});
 	}
 	// console.log(typeof video.owner)
 	// console.log(typeof _id)
 	if(String(video.owner) !== _id){
+		req.flash("error","Not Authorized")
 		//status(403) = Forbidden
 		return res.status(403).redirect("/");
 	}
@@ -86,27 +85,27 @@ export const postEdit= async(req, res)=> {
 	const {id} = req.params;
 	const {user: {_id}} =req.session;
 	const {title, description, hashtags}= req.body;
+	const video= await Video.findById(id)
 	//exists를 통해 video object대신에 filter를 통해 true혹은 false를 받는다 
-	const video= await Video.exists({_id: id});
-	if(!video){
+	const isExist= await Video.exists({_id: id});
+	if(!isExist){
 		return res.status(404).render("404", {pageTitle: "Video not found."});
 	}
-	console.log(video)
-	console.log(`video.owner`,video.owner.toHexString())
-	console.log(`video._id`,video._id)
-	console.log(`_id`,_id)
+	
+
 	if(String(video.owner) !== _id){
-		//status(403) = Forbidden
-		// return res.status(403).redirect("/");
+		// status(403) = Forbidden
+		return res.status(403).redirect("/");
 	}
-	// await Video.findByIdAndUpdate(id,{
-	// 	title, 
-	// 	description, 
-	// 	hashtags : Video.formatHashtags(hashtags),
-	// })
+	await Video.findByIdAndUpdate(id,{
+		title, 
+		description, 
+		hashtags : Video.formatHashtags(hashtags),
+	})
 	// //req.body => form에 있는 value의 javascript representation이다. server.js에 app.use(express.urlencoded({extended: true}));을 해줘야 사용 가능
 	// //input이 name of title 이기 떄문
-	// return res.redirect(`/videos/${id}`);
+	req.flash("success","Changes saved")
+	return res.redirect(`/videos/${id}`);
 };
 
 
@@ -144,3 +143,23 @@ export const search = async(req,res)=>{
 	};
 	return res.render("search", {pageTitle: "Search", videos});
 };
+
+export const registerView= async(req,res)=>{
+	const{id}=req.params;
+	const video= await Video.findById(id);
+	if(!video){
+		//응답에 상태코드 추가 status-> 렌더링
+		// return res.status(404)다음에 렌더링을 해줘야 하기 때문에
+		return res.sendStatus(404);
+	}
+	video.meta.views= video.meta.views+1;
+	await video.save();
+	//ok
+	return res.sendStatus(202);
+}
+
+export const createComment = (req,res)=>{
+	console.log("params:",req.params);
+	console.log("body:",req.body);
+	res.end()
+}

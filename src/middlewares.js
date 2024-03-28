@@ -22,6 +22,7 @@ export const protectorMiddleware=(req,res,next)=>{
 		//요청을 계속하게한다
 		next()
 	}else{
+		req.flash("error","Log In First")
 		res.redirect("/login");
 	}
 }
@@ -30,6 +31,7 @@ export const publicOnlyMiddleware=(req,res,next)=>{
 	if(!req.session.loggedIn){
 		next()
 	}else{
+		req.flash("error","Not Authorized")
 		res.redirect("/");
 	}
 }

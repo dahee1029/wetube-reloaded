@@ -8,7 +8,8 @@ import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
 import { localsMiddleware } from "./middlewares";
 import { connection } from "mongoose";
-
+import apiRouter from "./routers/apiRouter";
+import flash from "express-flash";
 
 
 const app= express();
@@ -17,6 +18,7 @@ const logger= morgan("dev");
 
 app.set("view engine","pug");
 app.set("views", process.cwd()+"/src/views");
+
 app.use(logger);
 //req.body 없음
 //unlencoded 이녀석이 html form형식을 이해하고 form을 우리가 사용할 수 있는 javascript objcet 형식으로 통역해준다.
@@ -42,15 +44,17 @@ app.use(session({
 	store: MongoStore.create({mongoUrl: process.env.DB_URL})
 }))
 
-
+app.use(flash());
 app.use(localsMiddleware);
 //static files (정적파일)serving활성화 =>브라우저에 폴더 전체를 노출시킴
 //서버에 assets폴더의 내용물을 /static주소를 통해 공개하라고 요청
+//- server가 /static을 이용해 express.static("assets")폴더 접근 권한을 줌
 app.use("/static",express.static("assets"));
 app.use("/uploads",express.static("uploads"));
 //이후에 req.body가 존재
 app.use("/", rootRouter);
 app.use("/users", userRouter);
 app.use("/videos",videoRouter);
+app.use("/api",apiRouter);
 
 export default app;

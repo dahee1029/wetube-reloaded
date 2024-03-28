@@ -1,5 +1,5 @@
 import express from "express";
-import { edit, remove, logout, see ,startGithubLogin, finishGithubLogin,startKakaoLogin, finishKakaoLogin, getEdit, postEdit, getChangePassword, postChangePassword} from "../controllers/userController";
+import { remove, logout, see ,startGithubLogin, finishGithubLogin,startKakaoLogin, finishKakaoLogin, getEdit, postEdit, getChangePassword, postChangePassword} from "../controllers/userController";
 import { avatarUpload, protectorMiddleware, publicOnlyMiddleware, uploadFiles } from "../middlewares";
 import { use } from "passport";
 const userRouter= express.Router();

@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-
 // export const formatHashtags =(hashtags)=>
 // hashtags.split(",").map((word)=>(word.startsWith("#")? word : `#${word}`))
 
@@ -13,8 +12,8 @@ const videoSchema= new mongoose.Schema({
 	hashtags: [{type: String}],
 	meta:{
 		views: {type:Number, default:0 , required: true},
-		rating: {type:Number, default:0 , required: true},
 	},
+	comment:[{type: mongoose.Schema.Types.ObjectId, required:true, ref:"Comment"}],
 	// object ID가 model User에서 온다고 알려줘야 mongoose가 우리를 도와줌
 	owner: {type: mongoose.Schema.Types.ObjectId, required: true, ref: "User"}
 })
@@ -26,5 +25,6 @@ const videoSchema= new mongoose.Schema({
 videoSchema.static('formatHashtags', function(hashtags){
 	return hashtags.split(",").map((word)=>(word.startsWith("#")? word : `#${word}`))
 })
+
 const Video = mongoose.model("Video",videoSchema)
 export default Video;

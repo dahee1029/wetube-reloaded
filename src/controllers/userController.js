@@ -215,7 +215,7 @@ export const logout = (req,res)=>{
 }
 
 export const getEdit=(req,res)=> {
-	return res.render("/users/edit-profile",{pageTitle:"Edit Profile"})
+	return res.render("users/edit-profile",{pageTitle:"Edit Profile"})
 }
 
 export const postEdit=async(req,res)=> {
@@ -244,7 +244,11 @@ export const postEdit=async(req,res)=> {
 }
 
 export const getChangePassword=(req,res)=>{
-	return res.render("/users/change-password",{pageTitle:"Change password"});
+	if(req.session.user.socialOnly===true){
+		req.flash("error","Can't change password")
+		return res.redirect("/");
+	}
+	return res.render("users/change-password",{pageTitle:"Change password"});
 }
 
 export const postChangePassword=async(req,res)=>{
@@ -267,6 +271,7 @@ export const postChangePassword=async(req,res)=>{
 	//User-> save()를 사용하기 위해서는 session에서 로그인된 user를 찾아야함
 	user.password= newPassword;
 	await user.save();
+	req.flash("info","Password updated")
 	return res.redirect("/")
 }
 
@@ -274,12 +279,19 @@ export const remove=(req,res)=> res.send("remove User");
 
 export const see=async(req,res)=> {
 	const {id} = req.params;
-	const user= await User.findById(id).populate("videos");
+
+	const user = await User.findById(id).populate({
+		path: "uploadedVideos",
+		populate: {
+			path: "owner",
+			model: "User",
+		},
+	});
 	if(!user){
 		return res.status(400).render("404",{pageTitle:"User not found."});
 	}
 	
-	return res.render("/users/profile",{pageTitle:`${user.username}의 Profile`,
+	return res.render("users/profile",{pageTitle:`${user.username}의 Profile`,
 	user,
 	})
 }

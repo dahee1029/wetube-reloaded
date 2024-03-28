@@ -1,16 +1,52 @@
 extends ../base
 
-block content 
-	video(src="/"+ video.fileUrl ,controls)
-	div 
-		p=video.description
-		p=video.hashtags
-		small=video.createdAt 
-	div 
-		small Uploaded by 
-			a(href=`/users/${video.owner._id}`)= video.owner.username
-	//- 데이터 형태가 다르면 같다고 할 수 없음
-	if String(video.owner._id)===String(loggedInUser._id)
-		a(href=`${video.id}/edit`) Edit Video &rarr;
-		br
-		a(href=`${video.id}/delete`) Delete Video &rarr;
+block content
+	div#videoContainer(data-id=video._id)
+		video(src="/" +video.fileUrl)
+		div 
+			span#hiddenPlayBtn
+				i.fas.fa-play
+
+		div#videoControls.videoControls
+			div.videoControls__play
+				span#playBtn.videoControls__playBtn 
+					i.fas.fa-play
+
+			div.videoControls__time
+				span#currentTime 00:00
+				span  / 
+				span#totalTime 00:00
+			input(type="range",step="1", value="0", min="0")#timeline.videoControls__timeline
+			div.videoControls__volume
+				input(type="range",step="0.1", value=0.5, min="0", max="1")#volume
+				span#muteBtn
+					i.fas.fa-volume-up
+			div 
+				span#fullScreen
+					i.fas.fa-expand
+	
+	if loggedIn 
+		.video__comments 
+			form.video__comment-form#commentForm
+				textarea(cols="30", rows="10", placeholder="Write a nice comment....")
+				button Add Comment
+//-div/
+	p=video.description
+//- div 
+//- 	p=video.description
+//- 	p=video.hashtags
+//- 	small=video.createdAt 
+//- div 
+//- 	small Uploaded by 
+//- 		a(href=`/users/${video.owner._id}`)= video.owner.username
+//- //- 데이터 형태가 다르면 같다고 할 수 없음
+//- if String(video.owner._id)===String(loggedInUser._id)
+//- 	a(href=`${video.id}/edit`) Edit Video &rarr;
+//- 	br
+//- 	a(href=`${video.id}/delete`) Delete Video &rarr;
+
+//- server가 /static을 이용해 express.static("assets")폴더 접근 권한을 줌
+block scripts 
+	script(src="/static/js/videoPlayer.js")
+	if loggedIn
+		script(src="/static/js/commentSection.js")
